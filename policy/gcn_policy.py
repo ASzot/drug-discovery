@@ -100,6 +100,7 @@ class GcnPolicy(nn.Module):
         X_second = self.softmax(X_second)
         X_edge = self.softmax(X_edge)
         X_stop = self.softmax(X_stop)
+        import pdb; pdb.set_trace()
 
         action = torch.cat([X_first, X_second, X_edge, X_stop])
 
