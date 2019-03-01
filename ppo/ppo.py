@@ -77,11 +77,9 @@ def train(get_env_fn, get_policy, params):
         envs = SubprocVecEnv(envs)
 
     obs_shape = (np.prod(envs.observation_space['node'].shape) + np.prod(envs.observation_space['adj'].shape),)
-    print('Obs shape', obs_shape)
-
     action_shape = (np.prod(envs.action_space.shape),)
 
-    policy = get_policy(obs_shape, envs.action_space)
+    policy = get_policy(envs.observation_space, envs.action_space)
 
     optimizer = optim.Adam(policy.parameters(), lr=params['lr'], eps=params['eps'])
 

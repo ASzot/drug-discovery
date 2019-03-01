@@ -9,11 +9,8 @@ class Policy(nn.Module):
 
         self.actor_critic = get_base(obs_shape, hidden_out)
 
-        num_outputs = np.prod(action_space.shape)
-
-        # How we will define our normal distribution to sample action from
-        self.action_mean = nn.Linear(hidden_out, num_outputs)
-        self.action_log_std = nn.Parameter(torch.zeros(1, num_outputs))
+        #self.action_mean = nn.Linear(hidden_out, num_outputs)
+        #self.action_log_std = nn.Parameter(torch.zeros(1, num_outputs))
 
     def __get_dist(self, actor_features):
         action_mean = self.action_mean(actor_features)
@@ -23,6 +20,7 @@ class Policy(nn.Module):
 
 
     def act(self, inputs, deterministic=False):
+        import pdb; pdb.set_trace()
         actor_features, value = self.actor_critic(inputs)
         dist = self.__get_dist(actor_features)
 
