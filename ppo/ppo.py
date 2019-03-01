@@ -76,7 +76,7 @@ def train(get_env_fn, get_policy, params):
         envs = [get_env_fn for i in range(params['n_envs'])]
         envs = SubprocVecEnv(envs)
 
-    obs_shape = (np.prod(envs.observation_space['node'].shape) + np.prod(envs.observation_space['adj'].shape),)
+    obs_shape = envs.observation_space['adj'].shape
     action_shape = (np.prod(envs.action_space.shape),)
 
     policy = get_policy(envs.observation_space, envs.action_space)
@@ -91,8 +91,10 @@ def train(get_env_fn, get_policy, params):
     def update_current_obs(obs):
         obs_parts = []
         for i in range(len(obs)):
-            obs_parts.append(np.concatenate([obs[i]['node'].flatten(),
-                obs[i]['adj'].flatten()], axis=0))
+            nodes = obs[i]['node']
+            adj = obs[i]['adj']
+            #obs_parts.append(np.concatenate([nodes, adj], axis=0))
+            obs_parts.append(adj)
 
         obs = np.array(obs_parts)
         # we want to use the same tensor every time so just copy it over.

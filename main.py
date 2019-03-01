@@ -2,9 +2,13 @@ from gym_molecule.envs.molecule import GraphEnv
 import numpy as np
 from ppo.args import get_default_args
 from ppo.ppo import train
-from policy.gnn_policy import GnnPolicy
+from policy.gcn_policy import GcnPolicy
 from policy.policy import Policy
 
+
+import os
+os.environ["CUDA_DEVICE_ORDER"]="PCI_BUS_ID"   # see issue #152
+os.environ["CUDA_VISIBLE_DEVICES"]="1"
 
 # Out action space is outputting 4 numbers
 # - Node 1
@@ -19,7 +23,7 @@ def get_env():
     return env
 
 def get_gnn_policy(obs_space, action_space):
-    return Policy(obs_space, action_space, GnnPolicy, 64)
+    return Policy(obs_space, action_space, GcnPolicy, 64)
 
 params = get_default_args()
 params['n_envs'] = 2

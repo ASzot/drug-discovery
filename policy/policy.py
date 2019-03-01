@@ -20,7 +20,6 @@ class Policy(nn.Module):
 
 
     def act(self, inputs, deterministic=False):
-        import pdb; pdb.set_trace()
         actor_features, value = self.actor_critic(inputs)
         dist = self.__get_dist(actor_features)
 
