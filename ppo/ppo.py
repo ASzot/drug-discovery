@@ -142,10 +142,10 @@ def train(get_env_fn, get_policy, params):
             episode_rewards *= masks
 
             # Update our current observation tensor
-            current_obs *= masks
+            current_obs *= masks.reshape(2, 1, 1, 1)
             update_current_obs(obs)
 
-            rollouts.insert(current_obs, action, action_log_prob, value, reward, masks)
+            rollouts.insert(current_obs, action.squeeze(1), action_log_prob, value, reward, masks)
 
         with torch.no_grad():
             next_value = policy.get_value(rollouts.observations[-1]).detach()

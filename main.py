@@ -23,7 +23,7 @@ def get_env():
     return env
 
 def get_gnn_policy(obs_space, action_space):
-    return Policy(obs_space, action_space, GcnPolicy, 64)
+    return Policy(obs_space, action_space, GcnPolicy)
 
 params = get_default_args()
 params['n_envs'] = 2

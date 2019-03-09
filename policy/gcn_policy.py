@@ -46,8 +46,6 @@ class GcnPolicy(nn.Module):
         hidden_layers = [input_shape['adj'].shape[1], 20, 16, 8]
         n_layers = len(hidden_layers)
 
-        # Number of hidden layers to use in the "m" networks from Equation 3.
-        m_hidden = input_shape['node'].shape[1]
 
         self.conv_weights = nn.ParameterList([
                 nn.Parameter(torch.randn(hidden_layers[i], hidden_layers[i+1]))
@@ -60,10 +58,10 @@ class GcnPolicy(nn.Module):
             ])
 
         # The networks described in Equation 3.
-        self.m_f = nn.Linear(hidden_layers[-1], m_hidden)
-        self.m_s = nn.Linear(hidden_layers[-1] + m_hidden, m_hidden)
-        self.m_e = nn.Linear(m_hidden + m_hidden, m_hidden)
-        self.m_t = nn.Linear(hidden_layers[-1], 1)
+        self.m_f = nn.Linear(hidden_layers[-1], num_outputs)
+        self.m_s = nn.Linear(hidden_layers[-1] + num_outputs, num_outputs)
+        self.m_e = nn.Linear(num_outputs + num_outputs, num_outputs)
+        self.m_t = nn.Linear(hidden_layers[-1], num_outputs)
 
         # Our critic function
         self.critic = nn.Linear(hidden_layers[-1], 1)
@@ -100,11 +98,11 @@ class GcnPolicy(nn.Module):
         X_second = self.softmax(X_second)
         X_edge = self.softmax(X_edge)
         X_stop = self.softmax(X_stop)
-        import pdb; pdb.set_trace()
 
-        action = torch.cat([X_first, X_second, X_edge, X_stop])
+        action = (X_first, X_second, X_edge, X_stop)
 
-        critic_X = __gcn_pass(adj_matrix, self.conv_weights_critic)
+        critic_X = self.__gcn_pass(A, D, adj_matrix, self.conv_weights_critic)
         critic = self.critic(critic_X)
+        critic = torch.sum(critic, dim=1)
 
         return action, critic
